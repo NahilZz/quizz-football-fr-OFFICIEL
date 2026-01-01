@@ -1,0 +1,642 @@
+import React, { useState } from 'react';
+import { Trophy, ChevronRight, RotateCcw, Home, Star } from 'lucide-react';
+
+const FootballQuizApp = () => {
+  const [currentPage, setCurrentPage] = useState('home');
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [score, setScore] = useState(0);
+  const [showScore, setShowScore] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [isAnswered, setIsAnswered] = useState(false);
+  const [selectedClub, setSelectedClub] = useState(null);
+
+  const clubs = [
+    {
+      id: 'om',
+      name: 'Olympique de Marseille',
+      shortName: 'OM',
+      colors: 'from-sky-500 to-blue-600',
+      available: true,
+      difficulty: 'Moyen'
+    },
+    {
+      id: 'psg',
+      name: 'Paris Saint-Germain',
+      shortName: 'PSG',
+      colors: 'from-blue-900 to-red-600',
+      available: true,
+      difficulty: 'Moyen'
+    },
+    {
+      id: 'ol',
+      name: 'Olympique Lyonnais',
+      shortName: 'OL',
+      colors: 'from-blue-600 to-red-500',
+      available: true,
+      difficulty: 'Moyen'
+    },
+    {
+      id: 'asse',
+      name: 'AS Saint-Étienne',
+      shortName: 'ASSE',
+      colors: 'from-green-600 to-green-800',
+      available: true,
+      difficulty: 'Difficile'
+    },
+    {
+      id: 'fcn',
+      name: 'FC Nantes',
+      shortName: 'FCN',
+      colors: 'from-yellow-400 to-green-500',
+      available: true,
+      difficulty: 'Moyen'
+    },
+    {
+      id: 'losc',
+      name: 'LOSC Lille',
+      shortName: 'LOSC',
+      colors: 'from-red-600 to-blue-700',
+      available: true,
+      difficulty: 'Facile'
+    }
+  ];
+
+  const quizData = {
+    om: [
+      {
+        question: "En quelle année l'OM a-t-il remporté la Ligue des Champions ?",
+        answers: ["1991", "1993", "1995", "1998"],
+        correct: 1
+      },
+      {
+        question: "Quel joueur détient le record de buts marqués avec l'OM ?",
+        answers: ["Jean-Pierre Papin", "Gunnar Andersson", "Josip Skoblar", "Mamadou Niang"],
+        correct: 1
+      },
+      {
+        question: "Combien de fois l'OM a-t-il été champion de France ?",
+        answers: ["8 fois", "9 fois", "10 fois", "11 fois"],
+        correct: 2
+      },
+      {
+        question: "Quel est le surnom officiel de l'OM ?",
+        answers: ["Les Olympiens", "Les Phocéens", "Les Marseillais", "Les Bleus et Blancs"],
+        correct: 1
+      },
+      {
+        question: "En quelle année a été fondé l'Olympique de Marseille ?",
+        answers: ["1895", "1899", "1902", "1905"],
+        correct: 1
+      },
+      {
+        question: "Quel stade est le domicile de l'OM ?",
+        answers: ["Stade Mayol", "Stade Vélodrome", "Parc des Princes", "Stade de France"],
+        correct: 1
+      },
+      {
+        question: "Qui était l'entraîneur lors de la victoire en C1 en 1993 ?",
+        answers: ["Rolland Courbis", "Raymond Goethals", "Guy Roux", "Aimé Jacquet"],
+        correct: 1
+      },
+      {
+        question: "Quelle est la capacité approximative du Vélodrome ?",
+        answers: ["55 000", "60 000", "67 000", "75 000"],
+        correct: 2
+      },
+      {
+        question: "Quel joueur français a porté le numéro 10 emblématique dans les années 2000 ?",
+        answers: ["Samir Nasri", "Franck Ribéry", "Mathieu Valbuena", "Florian Thauvin"],
+        correct: 0
+      },
+      {
+        question: "Contre quelle équipe l'OM a-t-il remporté la Ligue des Champions ?",
+        answers: ["AC Milan", "Juventus", "Bayern Munich", "Real Madrid"],
+        correct: 0
+      }
+    ],
+    psg: [
+      {
+        question: "En quelle année le PSG a-t-il été fondé ?",
+        answers: ["1970", "1972", "1974", "1976"],
+        correct: 0
+      },
+      {
+        question: "Quel joueur détient le record de buts avec le PSG ?",
+        answers: ["Zlatan Ibrahimovic", "Edinson Cavani", "Kylian Mbappé", "Pauleta"],
+        correct: 1
+      },
+      {
+        question: "Combien de fois le PSG a-t-il remporté la Ligue 1 ?",
+        answers: ["10 fois", "11 fois", "12 fois", "13 fois"],
+        correct: 2
+      },
+      {
+        question: "Quel est le nom du stade du PSG ?",
+        answers: ["Stade de France", "Parc des Princes", "Stade Jean Bouin", "Stade Charlety"],
+        correct: 1
+      },
+      {
+        question: "En quelle année le PSG a-t-il atteint sa première finale de Ligue des Champions ?",
+        answers: ["2018", "2019", "2020", "2021"],
+        correct: 2
+      },
+      {
+        question: "Qui est le président qatarien du PSG depuis 2011 ?",
+        answers: ["Nasser Al-Khelaïfi", "Tamim ben Hamad Al Thani", "Jassim Al Thani", "Hamad bin Khalifa"],
+        correct: 0
+      },
+      {
+        question: "Quel joueur brésilien emblématique a porté le numéro 10 au PSG ?",
+        answers: ["Ronaldinho", "Neymar", "Raí", "Leonardo"],
+        correct: 1
+      },
+      {
+        question: "Combien de Coupes de France le PSG a-t-il remportées ?",
+        answers: ["12", "14", "15", "16"],
+        correct: 1
+      },
+      {
+        question: "Quel entraîneur a mené le PSG en finale de C1 en 2020 ?",
+        answers: ["Laurent Blanc", "Unai Emery", "Thomas Tuchel", "Mauricio Pochettino"],
+        correct: 2
+      },
+      {
+        question: "Quelle est la capacité du Parc des Princes ?",
+        answers: ["45 000", "48 000", "50 000", "52 000"],
+        correct: 1
+      }
+    ],
+    ol: [
+      {
+        question: "Combien de titres consécutifs de champion de France l'OL a-t-il remportés ?",
+        answers: ["5", "6", "7", "8"],
+        correct: 2
+      },
+      {
+        question: "En quelle année l'OL a-t-il été fondé ?",
+        answers: ["1948", "1950", "1952", "1954"],
+        correct: 1
+      },
+      {
+        question: "Quel est le nom du stade de l'OL depuis 2016 ?",
+        answers: ["Stade de Gerland", "Groupama Stadium", "Parc OL", "Stade des Lumières"],
+        correct: 1
+      },
+      {
+        question: "Quel joueur brésilien légendaire a marqué l'histoire de l'OL ?",
+        answers: ["Juninho Pernambucano", "Sonny Anderson", "Edmilson", "Cris"],
+        correct: 0
+      },
+      {
+        question: "Combien de Coupes de la Ligue l'OL a-t-il remportées ?",
+        answers: ["0", "1", "2", "3"],
+        correct: 1
+      },
+      {
+        question: "Quel président a dirigé l'OL pendant l'ère des 7 titres ?",
+        answers: ["Bernard Lacombe", "Jean-Michel Aulas", "Serge Kampf", "Pathé Diouf"],
+        correct: 1
+      },
+      {
+        question: "Quelle est la capacité du Groupama Stadium ?",
+        answers: ["55 000", "59 000", "62 000", "65 000"],
+        correct: 1
+      },
+      {
+        question: "En quelle année l'OL a-t-il atteint les demi-finales de la Ligue des Champions ?",
+        answers: ["2009", "2010", "2019", "2020"],
+        correct: 3
+      },
+      {
+        question: "Quel joueur français formé à l'OL est devenu champion du monde 2018 ?",
+        answers: ["Alexandre Lacazette", "Nabil Fekir", "Corentin Tolisso", "Samuel Umtiti"],
+        correct: 2
+      },
+      {
+        question: "Quel est le surnom des supporters de l'OL ?",
+        answers: ["Les Gones", "Les Lyonnais", "Les Lions", "Les Rhodaniens"],
+        correct: 0
+      }
+    ],
+    asse: [
+      {
+        question: "Combien de titres de champion de France l'ASSE a-t-elle remportés ?",
+        answers: ["8", "10", "12", "14"],
+        correct: 1
+      },
+      {
+        question: "En quelle année l'ASSE a-t-elle été fondée ?",
+        answers: ["1919", "1920", "1933", "1945"],
+        correct: 1
+      },
+      {
+        question: "Quel est le nom du stade de Saint-Étienne ?",
+        answers: ["Stade de la Loire", "Stade Geoffroy-Guichard", "Stade des Verts", "Stade Étienne"],
+        correct: 1
+      },
+      {
+        question: "En quelle année l'ASSE a-t-elle atteint la finale de la Coupe d'Europe ?",
+        answers: ["1974", "1976", "1978", "1980"],
+        correct: 1
+      },
+      {
+        question: "Quel joueur légendaire surnommé 'l'Ange Vert' a marqué l'ASSE ?",
+        answers: ["Michel Platini", "Dominique Rocheteau", "Jacques Santini", "Bernard Bosquier"],
+        correct: 1
+      },
+      {
+        question: "Combien de Coupes de France l'ASSE a-t-elle remportées ?",
+        answers: ["4", "5", "6", "7"],
+        correct: 2
+      },
+      {
+        question: "Quel est le surnom de l'ASSE ?",
+        answers: ["Les Stéphanois", "Les Verts", "Les Foréziens", "Les Ligériens"],
+        correct: 1
+      },
+      {
+        question: "Quelle est la capacité du stade Geoffroy-Guichard ?",
+        answers: ["38 000", "40 000", "42 000", "45 000"],
+        correct: 2
+      },
+      {
+        question: "Contre quelle équipe l'ASSE a-t-elle perdu la finale de C1 en 1976 ?",
+        answers: ["Ajax Amsterdam", "Bayern Munich", "Liverpool", "Real Madrid"],
+        correct: 1
+      },
+      {
+        question: "Qui était l'entraîneur emblématique de l'ASSE dans les années 70 ?",
+        answers: ["Jean Snella", "Robert Herbin", "Aimé Jacquet", "Albert Batteux"],
+        correct: 1
+      }
+    ],
+    fcn: [
+      {
+        question: "Combien de fois le FC Nantes a-t-il été champion de France ?",
+        answers: ["6", "7", "8", "9"],
+        correct: 2
+      },
+      {
+        question: "En quelle année le FC Nantes a-t-il été fondé ?",
+        answers: ["1940", "1943", "1945", "1948"],
+        correct: 0
+      },
+      {
+        question: "Quel est le nom du stade du FC Nantes ?",
+        answers: ["Stade de la Beaujoire", "Stade Marcel Saupin", "Stade de l'Erdre", "Stade Nantais"],
+        correct: 0
+      },
+      {
+        question: "Quel entraîneur légendaire a fait la gloire du FC Nantes ?",
+        answers: ["Jean Vincent", "Raynald Denoueix", "José Arribas", "Vahid Halilhodžić"],
+        correct: 2
+      },
+      {
+        question: "Combien de Coupes de France le FCN a-t-il remportées ?",
+        answers: ["2", "3", "4", "5"],
+        correct: 1
+      },
+      {
+        question: "Quel joueur argentin légendaire a joué à Nantes ?",
+        answers: ["Diego Maradona", "Claudio Caniggia", "Gabriel Batistuta", "Mario Kempes"],
+        correct: 1
+      },
+      {
+        question: "Quel est le surnom du FC Nantes ?",
+        answers: ["Les Jaunes", "Les Canaris", "Les Bretons", "Les Nantais"],
+        correct: 1
+      },
+      {
+        question: "Quelle est la capacité du stade de la Beaujoire ?",
+        answers: ["35 000", "37 000", "39 000", "41 000"],
+        correct: 1
+      },
+      {
+        question: "En quelle année le FCN a-t-il atteint les demi-finales de la Coupe d'Europe ?",
+        answers: ["1980", "1982", "1984", "1996"],
+        correct: 3
+      },
+      {
+        question: "Quel joueur français formé à Nantes est devenu Ballon d'Or ?",
+        answers: ["Christian Karembeu", "Marcel Desailly", "Didier Deschamps", "Aucun"],
+        correct: 3
+      }
+    ],
+    losc: [
+      {
+        question: "En quelle année le LOSC a-t-il remporté le doublé Coupe-Championnat ?",
+        answers: ["2009", "2010", "2011", "2012"],
+        correct: 2
+      },
+      {
+        question: "Combien de fois Lille a-t-il été champion de France ?",
+        answers: ["3", "4", "5", "6"],
+        correct: 1
+      },
+      {
+        question: "Quel est le nom du stade actuel du LOSC ?",
+        answers: ["Stade Pierre-Mauroy", "Stadium Lille Métropole", "Stade Grimonprez-Jooris", "Stade du Nord"],
+        correct: 0
+      },
+      {
+        question: "Quel joueur français star du LOSC a rejoint Chelsea en 2011 ?",
+        answers: ["Yohan Cabaye", "Eden Hazard", "Gervinho", "Dimitri Payet"],
+        correct: 1
+      },
+      {
+        question: "En quelle année le LOSC a-t-il été fondé (fusion finale) ?",
+        answers: ["1944", "1948", "1950", "1952"],
+        correct: 1
+      },
+      {
+        question: "Combien de Coupes de France le LOSC a-t-il remportées ?",
+        answers: ["4", "5", "6", "7"],
+        correct: 2
+      },
+      {
+        question: "Quel est le surnom du LOSC ?",
+        answers: ["Les Dogues", "Les Nordistes", "Les Lillois", "Les Rouges"],
+        correct: 0
+      },
+      {
+        question: "Quelle est la capacité du Stade Pierre-Mauroy ?",
+        answers: ["48 000", "50 000", "52 000", "55 000"],
+        correct: 1
+      },
+      {
+        question: "En quelle année le LOSC a-t-il remporté son dernier titre de champion ?",
+        answers: ["2019", "2020", "2021", "2022"],
+        correct: 2
+      },
+      {
+        question: "Quel entraîneur a mené Lille au titre en 2021 ?",
+        answers: ["Marcelo Bielsa", "Christophe Galtier", "Paulo Fonseca", "Jocelyn Gourvennec"],
+        correct: 1
+      }
+    ]
+  };
+
+  const startQuiz = (clubId) => {
+    const club = clubs.find(c => c.id === clubId);
+    if (!club.available) return;
+    
+    setSelectedClub(club);
+    setCurrentPage('quiz');
+    setCurrentQuestion(0);
+    setScore(0);
+    setShowScore(false);
+    setSelectedAnswer(null);
+    setIsAnswered(false);
+  };
+
+  const goHome = () => {
+    setCurrentPage('home');
+    setSelectedClub(null);
+  };
+
+  const handleAnswerClick = (index) => {
+    if (isAnswered) return;
+    
+    setSelectedAnswer(index);
+    setIsAnswered(true);
+    
+    const questions = quizData[selectedClub.id];
+    if (index === questions[currentQuestion].correct) {
+      setScore(score + 1);
+    }
+  };
+
+  const handleNextQuestion = () => {
+    const questions = quizData[selectedClub.id];
+    const nextQuestion = currentQuestion + 1;
+    if (nextQuestion < questions.length) {
+      setCurrentQuestion(nextQuestion);
+      setSelectedAnswer(null);
+      setIsAnswered(false);
+    } else {
+      setShowScore(true);
+    }
+  };
+
+  const resetQuiz = () => {
+    setCurrentQuestion(0);
+    setScore(0);
+    setShowScore(false);
+    setSelectedAnswer(null);
+    setIsAnswered(false);
+  };
+
+  const getScoreMessage = () => {
+    const questions = quizData[selectedClub.id];
+    const percentage = (score / questions.length) * 100;
+    if (percentage === 100) return "Parfait ! Véritable supporter ! 🏆";
+    if (percentage >= 70) return "Très bien ! Tu connais ton club ! ⚽";
+    if (percentage >= 50) return "Pas mal ! Continue à suivre le foot ! 👍";
+    return "Il faut réviser ton histoire du club ! 📚";
+  };
+
+  // HOME PAGE
+  if (currentPage === 'home') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-slate-800 to-slate-900 text-white py-8 shadow-xl">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-center gap-3 mb-3">
+              <Trophy className="w-10 h-10" />
+              <h1 className="text-4xl font-bold">Quiz Football</h1>
+            </div>
+            <p className="text-center text-slate-300">Teste tes connaissances sur les plus grands clubs français</p>
+          </div>
+        </div>
+
+        {/* Main content */}
+        <div className="container mx-auto px-4 py-12 max-w-6xl">
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-10">
+            Choisis ton club
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {clubs.map((club) => (
+              <div
+                key={club.id}
+                className={`bg-white rounded-2xl shadow-lg overflow-hidden transition-all ${
+                  club.available 
+                    ? 'hover:shadow-2xl hover:-translate-y-1 cursor-pointer' 
+                    : 'opacity-60'
+                }`}
+                onClick={() => startQuiz(club.id)}
+              >
+                <div className={`bg-gradient-to-r ${club.colors} p-6 text-white relative`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-2xl font-bold">{club.shortName}</h3>
+                    {club.available && <Star className="w-6 h-6" />}
+                  </div>
+                  <p className="text-sm opacity-90">{club.name}</p>
+                  {!club.available && (
+                    <div className="absolute top-4 right-4 bg-black bg-opacity-50 px-3 py-1 rounded-full text-xs font-semibold">
+                      Bientôt
+                    </div>
+                  )}
+                </div>
+                
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm text-gray-600">Difficulté</span>
+                    <span className="text-sm font-semibold text-gray-800">{club.difficulty}</span>
+                  </div>
+                  
+                  {club.available ? (
+                    <button className={`w-full bg-gradient-to-r ${club.colors} text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity`}>
+                      Commencer le quiz
+                    </button>
+                  ) : (
+                    <button className="w-full bg-gray-300 text-gray-500 py-3 rounded-lg font-semibold cursor-not-allowed">
+                      Non disponible
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // QUIZ PAGE
+  const questions = quizData[selectedClub.id];
+  
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
+      {/* Header */}
+      <div className={`bg-gradient-to-r ${selectedClub.colors} text-white py-6 shadow-lg`}>
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between mb-2">
+            <button
+              onClick={goHome}
+              className="flex items-center gap-2 bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition-all"
+            >
+              <Home className="w-5 h-5" />
+              <span className="font-medium">Accueil</span>
+            </button>
+            <Trophy className="w-8 h-8" />
+          </div>
+          <h1 className="text-3xl font-bold text-center">Quiz {selectedClub.shortName}</h1>
+          <p className="text-center mt-2 opacity-90">{selectedClub.name}</p>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 py-8 max-w-3xl">
+        {showScore ? (
+          <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
+            <div className="mb-6">
+              <div className={`w-24 h-24 bg-gradient-to-br ${selectedClub.colors} rounded-full flex items-center justify-center mx-auto mb-4`}>
+                <Trophy className="w-12 h-12 text-white" />
+              </div>
+              <h2 className="text-3xl font-bold text-gray-800 mb-2">Quiz terminé !</h2>
+              <p className="text-xl text-gray-600 mb-4">
+                Score : <span className="font-bold text-sky-600">{score}</span> / {questions.length}
+              </p>
+              <p className="text-lg text-gray-700 font-medium">{getScoreMessage()}</p>
+            </div>
+            
+            <div className="flex gap-4 justify-center">
+              <button
+                onClick={resetQuiz}
+                className={`inline-flex items-center gap-2 bg-gradient-to-r ${selectedClub.colors} text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-all shadow-md hover:shadow-lg`}
+              >
+                <RotateCcw className="w-5 h-5" />
+                Recommencer
+              </button>
+              <button
+                onClick={goHome}
+                className="inline-flex items-center gap-2 bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-all"
+              >
+                <Home className="w-5 h-5" />
+                Accueil
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+            {/* Progress bar */}
+            <div className="bg-gray-100 p-4">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm font-medium text-gray-600">
+                  Question {currentQuestion + 1} / {questions.length}
+                </span>
+                <span className="text-sm font-medium text-sky-600">
+                  Score : {score}
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  className={`bg-gradient-to-r ${selectedClub.colors} h-2 rounded-full transition-all duration-300`}
+                  style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Question */}
+            <div className="p-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-8">
+                {questions[currentQuestion].question}
+              </h2>
+
+              {/* Answers */}
+              <div className="space-y-3 mb-6">
+                {questions[currentQuestion].answers.map((answer, index) => {
+                  const isCorrect = index === questions[currentQuestion].correct;
+                  const isSelected = index === selectedAnswer;
+                  
+                  let buttonClass = "w-full p-4 text-left rounded-xl border-2 transition-all font-medium ";
+                  
+                  if (!isAnswered) {
+                    buttonClass += "border-gray-200 hover:border-sky-400 hover:bg-sky-50 cursor-pointer";
+                  } else if (isCorrect) {
+                    buttonClass += "border-green-500 bg-green-50 text-green-800";
+                  } else if (isSelected && !isCorrect) {
+                    buttonClass += "border-red-500 bg-red-50 text-red-800";
+                  } else {
+                    buttonClass += "border-gray-200 opacity-50";
+                  }
+
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => handleAnswerClick(index)}
+                      className={buttonClass}
+                      disabled={isAnswered}
+                    >
+                      <span className="text-lg">{answer}</span>
+                      {isAnswered && isCorrect && (
+                        <span className="ml-2 text-green-600">✓</span>
+                      )}
+                      {isAnswered && isSelected && !isCorrect && (
+                        <span className="ml-2 text-red-600">✗</span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Next button */}
+              {isAnswered && (
+                <button
+                  onClick={handleNextQuestion}
+                  className={`w-full bg-gradient-to-r ${selectedClub.colors} text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2`}
+                >
+                  {currentQuestion === questions.length - 1 ? 'Voir le résultat' : 'Question suivante'}
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default FootballQuizApp;
